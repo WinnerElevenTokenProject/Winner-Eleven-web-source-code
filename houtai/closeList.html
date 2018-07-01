@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>winnereleven</title>
+<link rel="icon" href="img/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="css/basic.css"/>
+<link rel="stylesheet" href="css/main.css"/>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/pubs.js"></script>
+<script>
+
+</script>
+<style type="text/css">
+	/*添加车位号*/
+	
+	/*添加车位号*/
+</style>
+</head>
+<body id="all">
+<div class="c_main_l">
+	<div class="c_logo"><img height="35" src="img/logo.png"/></div>
+	<ul class="c_menu">
+		<li>
+			<a  href="gameList.html"><span>赛事列表</span><i></i></a>
+		</li>
+		<li class="on">
+			<a class="on" href="closeList.html"><span>已结束赛事列表</span><i></i></a>
+		</li>
+		<li>
+			<a href="teamList.html"><span>球队列表</span><i></i></a>
+		</li>
+		<li>
+			<a href="addTeam.html"><span>冠军竞猜设置</span><i></i></a>
+		</li>
+	</ul>
+</div>
+<div class="c_main_r">
+	<div class="c_topBar">
+		<p class="p1"><i></i><span class="fm2">您好：欢迎回来</span></p>
+		<p class="p2 fm2">
+			<a href="javascript:alert('暂未开放');" class="mr_20"><i class="i_man"></i><span class="va_m">修改信息</span></a>
+			<a href="javascript:loginOut();"><i class="i_sw"></i><span class="va_m">退出</span></a>
+		</p>
+	</div>
+	<div class="c_nav">
+		<div class="ti"></div>
+	</div>
+	<!--Content-->
+	<div class="c_content">
+		<div class="title txt_r">
+			
+		</div>
+
+		<table class="tab_list" width="100%">
+			<tr>
+				<th>赛事编号</th>
+				<th>赛事名称</th>
+				<th>赛事主队</th>
+				<th>赛事客队</th>
+				<th>赛事开始时间</th>
+				<th>赛事结果</th>
+			</tr>
+			<tr style="display:none;" :style="game?'display:table-row':'display:none'" v-for="game in gameList" v-if="game.result">
+				<td><span v-text="game.fieldNo"></span></td>
+				<td><span v-text="game.fieldName"></span></td>
+				<td><span v-text="game.homeTeam">俄罗斯</span></td>
+				<td><span v-text="game.visitingTeam">萨特</span></td>
+				<td><span v-text="game.fieldTime"></span></td>
+				<td><span v-text="game.result=='H'?'主队胜':(game.result=='P'?'平':'主队负')"></span></td>
+			</tr>
+		</table>
+		<!--Table input-->
+		
+		<!--/Table input-->
+	</div>
+	<!--/Content-->
+	<!--Foot-->
+	<!--/Foot-->
+</div>
+<!--Dialog-->
+<div class="dialog_box">
+	<div class="dg_ti"><span>标题</span></div>
+	<div class="dg_te">
+		<ul class="dg_row">
+			<li><span>名称：</span><p><input type="text" class="inpte" placeholder="输入新二维码的名称"/></p></li>
+			<li>
+				<span>类型：</span>
+				<p>
+					<label><input type="radio" name="inpra"/>&nbsp;永久</label><br/>
+					<label><input type="radio" name="inpra"/>&nbsp;临时</label>
+					<input type="text" class="inpte2" placeholder="输入有效时间1~30"/>&nbsp;分钟
+				</p>
+			</li>
+			<li><span>描述：</span><p><textarea></textarea></p></li>
+		</ul>
+	</div>
+	<div class="dg_btn">
+		<button class="btn_g mr_20" type="button">确定</button>
+		<button id="dg_close" class="btn_h" type="button">取消</button>
+		<div class="clear"></div>
+	</div>
+</div>
+<div class="shade_box"></div>
+<!--/Dialog-->
+<script type="text/javascript" src="js/vue.min.js"></script>
+<script type="text/javascript" src="js/layer.js"></script>
+<script type="text/javascript">
+var app=new Vue({
+	el: '#all',
+	data:{
+		gameList:[]
+	},
+	methods:{
+		goUrl:function(obj,str){
+			localStorage.setItem(str,JSON.stringify(obj));
+			location.href=str
+		},
+		kemuDel:function(str){
+			this.kemuList.splice(this.kemuList.indexOf(str),1);
+		},
+		PlaceDel:function(str){
+			this.PlaceList.splice(this.PlaceList.indexOf(str),1);
+		},
+		setResult:function(fieldNo){
+			this.layer=layer.open({
+			  type: 1,
+			  skin: '', //样式类名
+			  title:'选择比赛结果',
+			  closeBtn: 0, //不显示关闭按钮
+			  anim: 2,
+			  area:['500px','300px'],
+			  shadeClose: true, //开启遮罩关闭
+			  content:'<div style="text-align:center;padding-top:50px;"><span onclick="setResultGo('+fieldNo+',H)">主队胜</span><span onclick="setResultGo('+fieldNo+',P)">平</span><span onclick="setResultGo('+fieldNo+',V)">主队负</span></div>'
+			});
+		}
+	}
+})
+
+//倒计时
+//setTime();
+getList()
+function getList(){
+	$.ajax({xhrFields:{withCredentials:true},
+        url:dirUrl+"/bets/list/1",
+        type:"GET",
+        xhrFields: {  
+			withCredentials: true // 设置运行跨域操作  
+		},
+		contentType:"application/json",
+		async : false,
+        success:function(res){
+	        if(res.code==1000){
+	        	app.gameList=res.data;
+				//layer.msg('提交成功，请前往个人中心查看');
+				//location.href=goUrl||"/index.html"
+	        }else{
+	          	layer.msg(res.msg);
+	        }
+        },
+        error:function(res){
+        	
+        }
+    })
+}
+function setResultGo(fieldNo,result){
+	$.ajax({xhrFields:{withCredentials:true},
+        url:dirUrl+"/bets/list",
+        type:"POST",
+        xhrFields: {  
+			withCredentials: true // 设置运行跨域操作  
+		},
+		contentType:"application/json",
+		async : false,
+		data:JSON.stringify({
+			fieldNo:fieldNo,
+			result:result
+		}),
+        success:function(res){
+	        layer.msg(res.msg);
+        },
+        error:function(res){
+        	
+        }
+    })
+}
+</script>
+</body>
+</html>

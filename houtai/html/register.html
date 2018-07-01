@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>注册 - 半步多</title>
+<link rel="icon" href="img/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="css/basic.css"/>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/pubs.js"></script>
+<style>
+.box_reg   { width:600px; min-height:640px; margin:0 auto;}
+.box_reg .u    { padding:20px 0; border-bottom:1px solid #3f4954;}
+.box_reg .m    { margin-top:40px; border-bottom:1px solid #3f4954;}
+.box_reg .d    { padding:15px 85px 15px 70px;}
+.u img       { margin-left:35px;}
+.m li        { clear:both; display:block; width:100%; height:30px; padding:0 0 25px 78px; *margin-top:-4px;}
+.m li span   { float:left; display:block; width:80px; height:30px; padding-right:15px; line-height:30px; text-align:right;}
+.m li span i { padding-right:5px; color:#ff3f3f; vertical-align:middle; font-size:14px;}
+.m li span b { color:#697582; vertical-align:middle;}
+.m li p      { float:left; box-shadow:-1px 0 3px rgba(102,102,102,0.2);}
+.m li .te    { width:320px; height:20px; padding:4px 10px; border:1px solid #505b67; background:#3f4954; line-height:20px; color:#49afcd;}
+.m li .te2   { width:320px; height:60px; padding:4px 10px; border:1px solid #505b67; background:#3f4954; line-height:20px; color:#49afcd; resize:none; overflow:auto;}
+.m li .te:focus,.m li .te2:focus{ background:#46515d}
+.d .p1         { float:left; padding-top:5px;}
+.d .p2         { float:right; text-align:right;}
+.d .p1 a       { color:#49afcd; vertical-align:middle;}
+.d .p1 a:hover { text-decoration:underline;}
+.btn         { width:125px; padding:6px 0; text-shadow:0 -1px 0 rgba(51,51,51,0.3);}
+.btn:hover,
+.btn:active  { background:#28b779;}
+.btn2        { width:150px; height:30px; padding:0; margin-left:10px; background:#faa732;}
+.btn2:hover,
+.btn2:active { background:#f19a20;}
+.btn2_h:hover,
+.btn2_h:active,
+.btn2_h      { background:#aaa; cursor:auto;}
+.te2::-webkit-scrollbar        { width:14px; height:14px;}
+.te2::-webkit-scrollbar-track,
+.te2::-webkit-scrollbar-thumb  { border-radius:999px; border:5px solid transparent;} 
+.te2::-webkit-scrollbar-track  { box-shadow:1px 1px 5px rgba(0,0,0,.3) inset;}  
+.te2::-webkit-scrollbar-thumb  { min-height:20px; background-clip:content-box; box-shadow:0 0 0 5px rgba(0,0,0,.2) inset;}  
+.te2::-webkit-scrollbar-corner { background:transparent;}
+</style>
+<script>
+$(function(){
+	$.setBox("div.box_reg"); //设置Box居中
+	$("#verBtn").on("click", function(){$.timer(this);}); //60秒重发验证码
+	$("#regSubmit").on("click", function(){$.regVer(this);}); //注册验证
+});
+
+
+/**
+ * 注册验证
+ */
+$.regVer = function(o){
+	var o      = $(o),
+		reg    = "",
+		temp   = "",
+		p;
+
+	p    = $("#name");
+	temp = $.trim(p.val());
+	reg  = /^[a-zA-Z0-9_]{5,50}$/ 
+	if(temp == ""){
+		$.promptBox("请输入用户名", "#ffb848");
+		p.focus();
+		return false;
+	}else if(temp.length < 5){
+		$.promptBox("用户名长度应大于4个字符", "#ffb848");
+		p.focus();
+		return false;
+	}else if(!reg.test(temp)){
+		$.promptBox("用户名由长度大于4的字母数字下划线(_)组成", "#ffb848");
+		p.focus();
+		return false;
+	}
+
+	p    = $("#comp");
+	temp = $.trim(p.val());
+	if(temp == ""){
+		$.promptBox("请输入企业名称", "#ffb848");
+		p.focus();
+		return false;
+	}
+
+	p    = $("#city");
+	temp = $.trim(city.val());
+	if(temp == ""){
+		$.promptBox("请输入所在城市", "#ffb848");
+		p.focus();
+		return false;
+	}
+
+	p    = $("#mail");
+	temp = $.trim(mail.val());
+	reg  = /^[_a-z\d\-\./]+@[_a-z\d\-]+(\.[_a-z\d\-]+)*(\.(info|biz|com|edu|gov|net|am|bz|cn|cx|hk|jp|tw|vc|vn|com.cn))$/;
+	if(!reg.test(temp)){
+		$.promptBox("请输入正确的邮箱地址", "#ffb848");
+		p.focus();
+		return false;
+	}
+
+	p    = $("#reason");
+	temp = $.trim(p.val());
+	if(temp == ""){
+		$.promptBox("请输入申请原因", "#ffb848");
+		p.focus();
+		return false;
+	}else if(temp.length < 10){
+		$.promptBox("请输入申请原因长度应不少余10个字符", "#ffb848");
+		p.focus();
+		return false;
+	}
+
+	p    = $("#phone");
+	if($.phoneVer(p) == 0){
+		return false;
+	}
+
+	p    = $("#code");
+	temp = $.trim(p.val());
+	if(temp == ""){
+		$.promptBox("请输入手机上接收到的验证码", "#ffb848");
+		p.focus();
+		return false;
+	}
+}
+
+
+/**
+ * 手机号码验证
+ */
+$.phoneVer = function(p){
+	var reg = /^(13[0-9]|15[012356789]|18[0236789]|14[57])[0-9]{8}$/;
+	if(reg.test($.trim(p.val()))){
+		return 1;
+	}else{
+		$.promptBox("请输入正确的手机号码，以便接收验证码", "#ffb848");
+		p.focus();
+		return 0;
+	}
+}
+
+
+/**
+ * 60秒重发验证码
+ */
+var wait = 60,
+	T    = 0;
+$.timer = function(o){
+	var o = $(o),
+		p = $("#phone");
+
+	if($.phoneVer(p) == 0){
+		return false;
+	}
+
+	if(wait == 60){
+		//相关操作
+	}
+
+	if(wait <= 0){
+		clearTimeout(T);
+		o.attr("disabled", false);
+		o.html("发送验证码");
+		o.removeClass("btn2_h");
+		wait = 60;
+	}else{
+		o.attr("disabled", true);
+		o.html(wait + "秒后重获验证码");
+		o.addClass("btn2_h");
+		wait--;
+		T = setTimeout(function(){
+			$.timer(o);
+		}, 1000);
+	}
+}
+
+
+/**
+ * 设置Box居中
+ */
+$.setBox = function(o){
+	var o = $(o),
+		n = 0;
+
+	$(window).resize(function(){
+		setOH();
+	});
+	setOH();
+
+	function setOH(){
+		n = Math.floor(($(window).height() - o.height())/2);
+		n = n>0 ? n : 0;
+		o.css("paddingTop", n);
+	}
+}
+</script>
+</head>
+<body>
+	<div class="box_reg">
+		<div class="u"><img src="img/logo.png"/></div>
+		<ul class="m">
+			<li><span><i class="fm2">*</i><b>用户名:</b></span><p><input id="name" type="text" class="te" maxlength="16"/></p></li>
+			<li><span><i class="fm2">*</i><b>企业名称:</b></span><p><input id="comp" type="text" class="te" maxlength="64"/></p></li>
+			<li><span><i class="fm2">*</i><b>所在城市:</b></span><p><input id="city" type="text" class="te" maxlength="16"/></p></li>
+			<li><span><i class="fm2">*</i><b>邮箱地址:</b></span><p><input id="mail" type="text" class="te" maxlength="64"/></p></li>
+			<li style="height:70px;"><span><i class="fm2">*</i><b>申请原因:</b></span><p><textarea id="reason" class="te2"></textarea></p></li>
+			<li><span><i class="fm2">*</i><b>手机号码:</b></span><p><input id="phone" type="text" class="te" maxlength="11"/></p></li>
+			<!--<li><span></span><p><button id="verBtn" class="btn btn2 trans" type="button">发送验证码</button></p></li>-->
+			<li style="padding-bottom:40px;">
+				<span><i class="fm2">*</i><b>验证码:</b></span>
+				<p><input id="code" type="text" class="te" maxlength="10" style="width:160px;"/><button id="verBtn" class="btn btn2 trans" type="button">发送验证码</button></p>
+			</li>
+		</ul>
+		<div class="d">
+			<p class="p1"><a href="#" title="登录">已有账户，登录</a></p>
+			<p class="p2"><button id="regSubmit" class="btn trans" type="button">注&nbsp;&nbsp;册</button></p>
+			<div class="clear"></div>
+		</div>
+	</div>
+</body>
+</html>

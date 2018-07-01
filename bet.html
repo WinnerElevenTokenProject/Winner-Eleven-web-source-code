@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>WE</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="css/header2.css">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<style type="text/css">
+	body{height:100%;overflow-y:auto;position:relative;}
+	#all{opacity:0;}
+	.index{position:relative;}
+	#particles-js{position:absolute;top:0;left:0;width:100%;height:100%;}
+
+	.center{width:80%;max-width:800px;}
+	.loding{width:100%;height:100%;position:fixed;top:0;left:0;z-index:99;background:#232328;}
+	.loding .money_line{position:relative;height:24px;width:60%;max-width:500px;margin:0 auto;}
+	.loding .money_color{position:absolute;height:24px;width:20px;transition:width 0.5s;border-radius:11px;left:0;top:0;/*animation:loding 4s linear infinite;*/}
+
+	.loding .money_color i{display:block;position:absolute;right:10px;width:10px;height:10px;}
+	@keyframes loding{from {width:20px;}to {width: 100%;}}
+	.loding img{width:192px;margin:0 auto;margin-bottom:30px;}
+	.loding p{letter-spacing:15px;margin-top:30px;text-align:center;text-align:-moz-center;text-align:-webkit-center;}
+
+	@media only screen and (max-device-width: 480px) {
+		.nav_box .navbar{top:0;transform:none;}
+	    .navbar_lin{display:block;width:100%;height:100%;}
+	    .navbar_lin{display:block;width:100%;height:100%;}
+	    .navbar_lin span{width:36px;height:36px;text-align:center;line-height:10px;margin-top:34px;}
+	    .navbar_lin span i{width:80%;height:2px;background:#ccc;border-radius:1px;display:inline-block;}
+
+	}
+	.game .list p span em.hui{background:#595959;}
+	
+	</style>
+	<script type="text/javascript" src="js/jquery-1.12.4.js"></script>
+	<script type="text/javascript" src="js/rem.js"></script>
+</head>
+<body>
+<div id="all">
+	<div class="nav_box">
+			<div class="logo"><img src="img/logo.png"></div>
+			<div class="navbar_lin" onclick="shownav(this)">
+				<span class="r">
+					<i></i>
+					<i></i>
+					<i></i>
+				</span>
+			</div>
+			<div class="navbar">
+				<ul class="font12 r fcg1b nav navbar-nav navbar-right daohang"><li class=""><a href="index.html" class="fcg1b">HOME</a></li><li class="" v-if="userName"><a href="user.html" class="fcg1b"  v-text="userName">958471324@qq.com</a></li><li class="" v-if="userName"><a href="javascript:loginOut();" class="fcg1b" >LOG Out</a></li><li class="" v-if="!userName"><a href="login.html" class="fcg1b" >LOGIN</a></li><li class="" v-if="!userName"><a href="register.html" class="fcg1b" >REGISTER</a></li></ul>
+			</div>
+			<div class="language font12 fcw"><a href="#">ENGLISH</a> | <a href="#">CHINESE</a></div>
+	</div>
+	<div class="index" id="home">
+		<!-- <div id="particles-js"></div> -->
+		<div class="w container">
+			<img src="img/bet1.png">
+			<p class="font16 fcw">Winner Eleven is the official cryptocurrency designed for sports industry with decentralized smart contract technology to power bettor creditorship</p>
+			<div class="index_button hang font24"><i class=""><span class="fcw font24">详细规则</span></i><i class=""><span class="fcw"><a href="user.html" class="font24">我的竞猜</a></span></i></div>
+		</div>
+	</div>
+	<div class="public" id="">
+		<div class="w container font16">
+			<div class="schedule"><span class="curr" ><i>小组赛</i></span><span :class="getGameType(gameType)>=1?'curr':''"><i>1/8决赛</i></span><span :class="getGameType(gameType)>=2?'curr':''"><i>1/4决赛</i></span><span :class="getGameType(gameType)>=3?'curr':''"><i>半决赛</i></span><span :class="getGameType(gameType)>=4?'curr':''"><i>决赛</i></span></div>
+		</div>
+	</div>
+	<div class="game">
+		<div class="w container ">
+			<div class="tab font22 fcg7c"><span class="curr">未完场</span><span>已完场</span><span>总冠军猜想</span></div>
+			<div class="nocomplete gameList">
+				<div class="list" v-for="game in gameList" v-if="!game.result">
+					<h5 class="font16 fcg1b"><span class="l" v-text="game.fieldName||''"></span><span class="r fcg7c" v-text="game.bettingTimeEnd+'截止'"></span></h5>
+					<div class="font16 fcg1b"><span v-text="game.homeTeam||''"></span><a><img :src="'guoqi/'+game.homeTeam+'.png'"></a><a><img src="img/vs.png"></a><a><img :src="'guoqi/'+game.visitingTeam+'.png'"></a><span v-text="game.visitingTeam||''"></span></div>
+					<p class="font14 fcg7c">此场比赛竞猜奖励基数: 对(<i v-text="game.victoryBaseNum"></i>) 错(<i v-text="game.negativeBaseNum"></i>)<br><text class="fcr" v-if="game.guessingState==1">已参与</text></p>
+					<p class="font14 fcg7c"><span><em @click="guessIng(game,1,game.winNum)" v-text="game.homeTeam+'赢'"></em><b v-text="'获得赔率:'+game.winNum"></b></span><span><em class="hui" @click="guessIng(game,2,0)">平</em><b v-text="'获得赔率:0'"></b></span><span><em @click="guessIng(game,3,game.flatNum)" v-text="game.visitingTeam+'赢'"></em><b v-text="'获得赔率:'+game.negativeNum"></b></span></p>
+				</div>
+				<!-- 
+				<div class="list">
+					<h5 class="font16 fcg1b"><span class="l">小组赛</span><span class="r fcg7c">6月14日 22:00截止</span></h5>
+					<div class="font16 fcg1b"><span>俄罗斯</span><img src="img/guo1.png"><img src="img/vs.png"><img src="img/guo2.png"><span>沙特</span></div>
+					
+					<strong class="font16 fcr">6月15日 06:00即将开始</strong>
+				</div> -->
+			</div>
+			<div class="complete gameList" style="display:none;">
+				<div class="list" v-for="game in gameList" v-if="game.result">
+					<h5 class="font16 fcg1b"><span class="l" v-text="game.fieldName||''"></span><span class="r fcg7c" v-text="game.bettingTimeEnd+'截止'"></span></h5>
+					<div class="font16 fcg1b"><span v-text="game.homeTeam||''"></span><a :class="game.result=='V'||game.result=='P'?'no':''"><img :src="'guoqi/'+game.homeTeam+'.png'"></a><a><img src="img/vs.png"></a><a :class="game.result=='H'||game.result=='P'?'no':''"><img :src="'guoqi/'+game.visitingTeam+'.png'"></a><span v-text="game.visitingTeam||''"></span></div>
+					<strong class="font16 fcg1b" style="border-color:#1b1b1b">竞猜已结束</strong>
+				</div>
+			</div>
+			<div class="champion gameList" style="display:none;">
+				<div class="champion_list" v-for="game in gameList2" v-if="game.eliminated!=2">
+					<img :src="'guoqi/'+game.teamName+'.png'">
+					<h3 class="font20 fcg1b" v-text="game.teamName"></h3>
+					<p class="font14 fcg7c" v-text="'总冠军奖励:'+game.championWinNum"></p>
+					<div class="font14" :class="game.eliminated==1||(guessingState==1&&game.guessingState!=1)?'no':''" @click="guessIng(game,4,1)"><i>竞猜</i></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="foot">
+		<div class="w container font16 fcg1b">
+			<div><a href="#"><img src="img/foot1.png"></a><a href="#"><img src="img/foot2.png"></a><a href="#"><img src="img/foot3.png"></a><a href="#"><img src="img/foot4.png"></a><a href="#"><img src="img/foot5.png"></a><a href="#"><img src="img/foot6.png"></a></div>
+			<p>Copyright c 2018 The Winner Eleven Group. All Rights Reserved. <span class="fcr">About Private Policy.</span></p>
+		</div>
+	</div>
+	<div class="to_top"></div>
+</div>
+
+
+<!-- <script type="text/javascript" src="js/particles.js"></script> -->
+<!-- <script type="text/javascript" src="js/app.js"></script> -->
+<script type="text/javascript" src="js/layer.js"></script>
+<script type="text/javascript" src="js/vue.min.js"></script>
+<script type="text/javascript">
+var app=new Vue({
+	el: '#all',
+	data:{
+		gameList:[],
+		gameList2:[],
+		guessingState:0,
+		userName:localStorage.getItem("userName")||"",
+		gameType:0
+	},
+	methods:{
+		getGameType(str){
+			switch(str){
+				case "小组赛":
+					return 0;
+				case "1/8决赛":
+					return 1;
+				case "1/4决赛":
+					return 2;
+				case "半决赛":
+					return 3;
+				case "决赛":
+					return 4;
+				
+			}
+			return 0
+		},
+		kemuDel:function(str){
+			this.kemuList.splice(this.kemuList.indexOf(str),1);
+		},
+		PlaceDel:function(str){
+			this.PlaceList.splice(this.PlaceList.indexOf(str),1);
+		},
+		guessIng:function(obj,type,mun){
+			if(mun==0){
+				return false
+			}
+			var buttingType="W",fiedType="";
+			switch(type){
+				case 1:
+					buttingType="W"
+					break;
+				case 2:
+					buttingType="F"
+					break;
+				case 3:
+					buttingType="N"
+					break;
+				case 4:
+					fiedType=2
+			}
+			if(obj.guessingState==1){
+				return false
+			}
+			var loading = layer.load(1, {shade: [0.1,'#fff']});
+			$.ajax({xhrFields:{withCredentials:true},
+		        url:dirUrl+"/bets/guessing",
+		        type:"POST",
+		        xhrFields: {  
+					withCredentials: true // 设置运行跨域操作  
+				},
+				contentType:"application/json",
+				async : false,
+				data:JSON.stringify({
+					bettingTeam:type==4?obj.teamName:obj.homeTeam,
+					buttingType:buttingType,
+					fiedType:"H",
+					fieldNo:obj.fieldNo,
+					finalsStatus:type!=4?1:2
+				}),
+		        success:function(res){
+		        	layer.close(loading)
+			        if(res.code==1000){
+			        	getList()
+			        	getList2()
+			        	layer.msg(res.message);
+			        }else if(res.code==1005){
+			          	location.href="login.html"
+			        }else{
+			        	layer.msg(res.message);
+			        }
+		        },
+		        error:function(res){
+		        	layer.close(loading)
+		        }
+		    })
+		}
+	}
+})
+$(".tab").find("span").on("click",function(){
+	$(this).addClass("curr").siblings("span").removeClass("curr")
+	$(".gameList").css("display","none").eq($(this).index()).css("display","block")
+})
+//加载事件
+window.onload=function(){
+	$(".loding").css("display","none");
+	$("#all").css("opacity","1")
+}
+//倒计时
+//setTime();
+getList()
+function getList(){
+	$.ajax({xhrFields:{withCredentials:true},
+        url:dirUrl+"/bets/list/1",
+        type:"GET",
+        xhrFields: {  
+			withCredentials: true // 设置运行跨域操作  
+		},
+		contentType:"application/json",
+		async : false,
+        success:function(res){
+	        if(res.code==1000){
+	        	res.data.some(function(v,i){
+	        		if(!v.result){
+	        			app.gameType=v.fieldName
+	        			return true
+	        		}
+	        	})
+	        	localStorage.setItem("gameType",app.gameType)
+	        	app.gameList=res.data;
+				//layer.msg('提交成功，请前往个人中心查看');
+				//location.href=goUrl||"/index.html"
+	        }else{
+	          	layer.msg(res.message);
+	        }
+        },
+        error:function(res){
+        	
+        }
+    })
+}
+getList2()
+function getList2(){
+	$.ajax({xhrFields:{withCredentials:true},
+        url:dirUrl+"/bets/championList",
+        type:"GET",
+        xhrFields: {  
+			withCredentials: true // 设置运行跨域操作  
+		},
+		contentType:"application/json",
+		async : false,
+        success:function(res){
+	        if(res.code==1000){
+	        	res.data.forEach(function(v,i){
+	        		if(v.guessingState==1){
+	        			app.guessingState=v.guessingState
+	        		}
+	        	})
+	        	app.gameList2=res.data;
+	        }else{
+	          	layer.msg(res.message);
+	        }
+        },
+        error:function(res){
+        	
+        }
+    })
+}
+function loginOut(){
+	$.ajax({xhrFields:{withCredentials:true},
+        url:dirUrl+"/logout",
+        type:"GET",
+        xhrFields: {  
+			withCredentials: true // 设置运行跨域操作  
+		},
+		contentType:"application/json",
+		async : false,
+        success:function(res){
+        	localStorage.removeItem("userName")
+	        if(res.code==1000){
+	        	layer.msg(res.message);
+	        	location.reload()
+	        }else if(res.code==1005){
+
+	          	layer.msg(res.message);
+	        }
+        },
+        error:function(res){
+        	
+        }
+    })
+}
+function shownav(dom){
+	if($(dom).siblings(".navbar").find("ul").css("display")=="block"){
+		$(dom).siblings(".navbar").find("ul").css("display","none");
+	}else{
+		$(dom).siblings(".navbar").find("ul").css("display","block");
+	}
+	
+} 
+$(".navbar a").on("click",function(){
+	if($(".navbar_lin").css("display")!="none"){
+		$(".navbar").find("ul").css("display","none");
+	}
+	
+})
+</script>
+</body>
+</html>

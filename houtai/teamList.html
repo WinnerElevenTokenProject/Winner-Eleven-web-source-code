@@ -1,0 +1,286 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>winnereleven</title>
+<link rel="icon" href="img/logo.ico" type="image/x-icon">
+<link rel="stylesheet" href="css/basic.css"/>
+<link rel="stylesheet" href="css/main.css"/>
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/pubs.js"></script>
+<script>
+
+</script>
+<style type="text/css">
+	/*添加车位号*/
+	
+	/*添加车位号*/
+</style>
+</head>
+<body id="all">
+<div class="c_main_l">
+	<div class="c_logo"><img height="35" src="img/logo.png"/></div>
+	<ul class="c_menu">
+		<li >
+			<a href="gameList.html"><span>赛事列表</span><i></i></a>
+		</li>
+		<li>
+			<a href="closeList.html"><span>已结束赛事列表</span><i></i></a>
+		</li>
+		<li class="on">
+			<a class="on" href="teamList.html"><span>球队列表</span><i></i></a>
+		</li>
+		<li>
+			<a href="addTeam.html"><span>冠军竞猜设置</span><i></i></a>
+		</li>
+	</ul>
+</div>
+<div class="c_main_r">
+	<div class="c_topBar">
+		<p class="p1"><i></i><span class="fm2">您好：欢迎回来</span></p>
+		<p class="p2 fm2">
+			<a href="javascript:alert('暂未开放');" class="mr_20"><i class="i_man"></i><span class="va_m">修改信息</span></a>
+			<a href="javascript:loginOut();"><i class="i_sw"></i><span class="va_m">退出</span></a>
+		</p>
+	</div>
+	<div class="c_nav">
+		<div class="ti"></div>
+	</div>
+	<!--Content-->
+	<div class="c_content">
+		<div class="title txt_r">
+			<a class="bgre va_m" href="addTeam.html">+新增比赛</a>
+		</div>
+
+		<table class="tab_list" width="100%">
+			<tr>
+				<th>中文名称</th>
+				<th>英文名称</th>
+				<th>赔率</th>
+				<th>状态</th>
+				<th>操作</th>
+			</tr>
+			<tr style="display:none;" :style="game?'display:table-row':'display:none'" v-for="game in TeamList2">
+				<td><span v-text="game.cnName"></span></td>
+				<td><span v-text="game.enName"></span></td>
+				<td><span v-text="game.championWinNum"></span></td>
+				<td><span v-text="getGUANJUN(game.eliminated)"></span></td>
+				<td><a class="c09f" style="margin-left:10px;cursor:default;" v-if="eliminateds!=1&&game.eliminateds!=2" @click="edit(game)">编辑</a><a class="c09f" style="margin-left:10px;cursor:default;" v-if="eliminateds!=1&&game.eliminated!=2" @click="eliminated(game,2)">淘汰</a><a class="c09f" style="margin-left:10px;cursor:default;" v-if="eliminateds!=1&&game.eliminated!=2" @click="win(game)">获得冠军</a></td>
+			</tr>
+		</table>
+		<!--Table input-->
+		
+		<!--/Table input-->
+	</div>
+	<!--/Content-->
+	<!--Foot-->
+	<!--/Foot-->
+</div>
+<!--Dialog-->
+<div class="dialog_box">
+	<div class="dg_ti"><span>标题</span></div>
+	<div class="dg_te">
+		<ul class="dg_row">
+			<li><span>名称：</span><p><input type="text" class="inpte" placeholder="输入新二维码的名称"/></p></li>
+			<li>
+				<span>类型：</span>
+				<p>
+					<label><input type="radio" name="inpra"/>&nbsp;永久</label><br/>
+					<label><input type="radio" name="inpra"/>&nbsp;临时</label>
+					<input type="text" class="inpte2" placeholder="输入有效时间1~30"/>&nbsp;分钟
+				</p>
+			</li>
+			<li><span>描述：</span><p><textarea></textarea></p></li>
+		</ul>
+	</div>
+	<div class="dg_btn">
+		<button class="btn_g mr_20" type="button">确定</button>
+		<button id="dg_close" class="btn_h" type="button">取消</button>
+		<div class="clear"></div>
+	</div>
+</div>
+<div class="shade_box"></div>
+<!--/Dialog-->
+<script type="text/javascript" src="js/vue.min.js"></script>
+<script type="text/javascript" src="js/layer.js"></script>
+<script type="text/javascript">
+var app=new Vue({
+	el: '#all',
+	data:{
+		TeamList:{},
+		layer:"",
+		TeamList2:{},
+		count:0,
+		eliminateds:0
+	},
+	watch:{
+		count:function(){
+			if(this.count>=2){
+				this.TeamList2=this.TeamList
+			}
+		}
+	},
+	methods:{
+		edit:function(obj){
+			var that=this
+			this.layer=layer.open({
+			  type: 1,
+			  skin: '', //样式类名
+			  title:obj.enName+"赔率设置",
+			  closeBtn: 0, //不显示关闭按钮
+			  anim: 2,
+			  area:['500px','200px'],
+			  shadeClose: true, //开启遮罩关闭
+			  content:'<div style="padding-top:30px;">队伍赔率 <input id="championWinNum" type="text" class="inpte"></div>',
+			  btn:["确定","取消"],
+			  yes:function(index, layero){
+			  	obj.championWinNum=$("#championWinNum").val();
+			  	if(obj.championWinNum){
+			  		that.eliminated(obj,0)
+			  		layer.close(index);
+			  	}else{
+			  		layer.msg("赔率不能为空");
+			  	}
+				 
+			  },
+			  btn2:function(){
+			  	
+			  }
+			});
+		},
+		getGUANJUN:function(value){
+			switch(value){
+				case 0:
+					return this.eliminateds==1?"淘汰":"比赛中"
+				case 1:
+					return "获得冠军"
+				case 2:
+					return "淘汰"
+			}
+		},
+		goUrl:function(obj,str){
+			localStorage.setItem("team",JSON.stringify(obj));
+			location.href=str
+		},
+		eliminated:function(obj,type){
+			$.ajax({xhrFields:{withCredentials:true},
+		        url:dirUrl+"/field/championSave",
+		        type:"POST",
+		        xhrFields: {  
+					withCredentials: true // 设置运行跨域操作  
+				},
+				contentType:"application/json",
+				async : false,
+				data:JSON.stringify({
+					championWinNum:obj.championWinNum,
+					eliminated:type,
+					teamName:obj.enName,
+					fieldNo:"9999",
+				}),
+		        success:function(res){
+			        layer.msg(res.message);
+	        		//location.reload()
+		        },
+		        error:function(res){
+		        	
+		        }
+		    })
+		},
+		win:function(obj){
+			
+			$.ajax({xhrFields:{withCredentials:true},
+		        url:dirUrl+"/field/openPrizeChampion",
+		        type:"POST",
+		        xhrFields: {  
+					withCredentials: true // 设置运行跨域操作  
+				},
+				contentType:"application/json",
+				async : false,
+				data:JSON.stringify({
+					fieldNo:"9999",
+					result :"W",
+					teamName:obj.enName
+				}),
+		        success:function(res){
+			        layer.msg(res.message);
+	        		location.reload()
+		        },
+		        error:function(res){
+		        	
+		        }
+		    })
+		},
+		kemuDel:function(str){
+			this.kemuList.splice(this.kemuList.indexOf(str),1);
+		},
+		PlaceDel:function(str){
+			this.PlaceList.splice(this.PlaceList.indexOf(str),1);
+		},
+	}
+})
+
+//倒计时
+//setTime();
+getList()
+function getList(){
+	$.ajax({xhrFields:{withCredentials:true},
+        url:dirUrl+"/bets/championList",
+        type:"GET",
+        xhrFields: {  
+			withCredentials: true // 设置运行跨域操作  
+		},
+		contentType:"application/json",
+		async : false,
+        success:function(res){
+	        if(res.code==1000){
+	        	res.data.forEach(function(v,i){
+	        		if(v.eliminated==1){
+	        			app.eliminated=1
+	        		}
+	        		if(app.TeamList[v.teamName]){
+	        			app.TeamList[v.teamName].championWinNum=v.championWinNum
+	        			app.TeamList[v.teamName].victoryBaseNum=v.victoryBaseNum
+	        			app.TeamList[v.teamName].negativeBaseNum=v.negativeBaseNum
+	        			app.TeamList[v.teamName].fieldNo=v.fieldNo
+	        			app.TeamList[v.teamName].eliminated=v.eliminated
+	        		}else{
+	        			app.TeamList[v.teamName]=v
+	        		}
+	        	})
+	        	app.count++
+	        }else{
+	          	layer.msg(res.msg);
+	        }
+        },
+        error:function(res){
+        	
+        }
+    })
+}
+getTeamList()
+function getTeamList(){
+	$.ajax({xhrFields: {withCredentials: true},
+        url:dirUrl+"/getTerms",
+        type:"GET",
+        success:function(res){
+        	if(res.code==1000){
+        		res.data.forEach(function(v,i){
+	        		if(app.TeamList[v.enName]){
+	        			app.TeamList[v.enName].enName=v.enName
+	        			app.TeamList[v.enName].cnName=v.cnName
+	        		}else{
+	        			app.TeamList[v.enName]=v
+	        		}
+	        	})
+	        	app.count++
+        	}
+	        //location.reload()
+        },
+        error:function(res){
+        	
+        }
+    })
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>园林专家</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no" />
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<script type="text/javascript" src="js/zepto.min.js"></script>
+<script type="text/javascript" src="js/rem.js?234"></script>
+<script type="text/javascript" src="js/layer.js"></script>
+<style type="text/css">
+#allbody{background:#fff;}
+#all{padding:0 .6rem;overflow-y:auto;height:100%;}
+.page_top{padding-top:.56rem;}
+.page_top img{width:4.4rem;}
+.page_top  h1{line-height:.58rem;}
+.page_input{margin-top:.3rem;}
+.page_input p{height:.6rem;line-height:.6rem;}
+.page_input input{width:1.47rem;height:.56rem;border:1px solid #989a9a;margin-right:.1rem;display:inline-block;vertical-align:middle;text-align:center;}
+.page_input span{display:inline-block;width:2.31rem;height:.9rem;line-height:.9rem;text-align:center;background:#e4161c;margin-top:.35rem;}
+.er_code{margin-top:.35rem;}
+.er_code:before{content:"";width:5rem;display:block;height:.4rem;background:#e41836;}
+.er_code img{width:5rem;}
+.upshot{margin-top:.35rem;width:5rem;}
+.upshot p{line-height:.34rem;text-align:center;}
+.upshot div{border:1px solid #e41935;text-align:center;min-height:3rem;line-height:.5rem;padding:.3rem;}
+</style>
+</head>
+<body id="allbody">
+<div id="all">
+	<div class="page_top">
+		<div class="logo"><img src="img/LOGO.png"></div>
+		<h1 class="font36">技术领先的园林机械专家</h1>
+	</div>
+	<div class="page_input">
+		<p class="font34">请输入16位防伪码</p>
+		<div><input type="text" maxlength="4" name="" onkeyup="changeInput(this)"><input type="text" maxlength="4" name="" onkeyup="changeInput(this)"><input type="text" maxlength="4" name="" onkeyup="changeInput(this)"><input type="text" maxlength="4" name="" onkeyup="changeInput(this)"></div>
+		<div class="checkout font38 fcw"><span onclick="checkout(1)">查询</span><span onclick="checkout(2)">查询结果2</span></div>
+	</div>
+	<div class="er_code"><img src="img/er_code.png"></div>
+	<div class="upshot" style="display:none">
+		<p>查询结果</p>
+		<div>阿萨德绿卡时间段阿克苏房间号</div>
+	</div>
+</div>
+</body>
+
+<script type="text/javascript">
+function changeInput(dom){
+	if($(dom).val().length==4&&$(dom).next()){
+		$(dom).next().focus()
+	}
+}
+function checkout(index){
+	var pd=true;
+	var laoding=layer.open({type: 2});
+	setTimeout(function(){
+		if(index==1){
+			layer.open({
+				title:"查询结果",
+				content:"阿斯达所多卢卡斯积分按时付款"
+			})
+		}else{
+			$(".upshot").css("display","block")
+			$("#all").scrollTop(1000)
+		}
+		layer.close(laoding)
+	},500)
+	
+	return false
+	$(".page_input").find("input").each(function(){
+		if($(this).val().length!=4){
+			$(this).focus()
+			error_msg("请输入正确的防伪验证码",2000);
+			pd=false;
+			return false;
+		}
+	})
+	if(!pd){
+		return false;
+	}
+	// 提交
+	$.ajax({
+	    url:"",
+	    type:"GET",
+	    data:{
+	    	
+	    },
+	    success:function(res){
+	    	
+	    },
+	    error:function(res){
+	    	
+	    }
+	})
+}
+</script>
+</html>
